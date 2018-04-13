@@ -8,4 +8,4 @@ file. This change log follows the conventions of
 
 - Add `dpkg` task
 
-[Unreleased]: https://github.com/your-name/boot-deb/compare/...HEAD
+[Unreleased]: https://github.com/your-name/boot-deb/compare/3d0c43f...HEAD
