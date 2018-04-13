@@ -10,7 +10,9 @@ A Boot task for generating debian binary packages.
 
 - Provides a `dpkg` task
 
-_Currently this task shells out to `dpkg-deb`_ to create the package.
+_Currently this task shells out to `dpkg-deb` to create the
+package_. So you probably need to be on a debian system, or otherwise
+have that binary available.
 
 ## Usage
 
