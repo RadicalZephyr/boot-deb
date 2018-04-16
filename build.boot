@@ -1,4 +1,4 @@
-(def project 'boot-deb)
+(def project 'radicalzephyr/boot-dpkg)
 (def version "0.1.0-SNAPSHOT")
 
 (set-env! :resource-paths #{"resources" "src"}
@@ -22,4 +22,4 @@
   (comp (pom) (jar) (install)))
 
 (require '[adzerk.boot-test :refer [test]]
-         '[radicalzephyr.boot-deb :refer [dpkg]])
+         '[radicalzephyr.boot-dpkg :refer [dpkg]])

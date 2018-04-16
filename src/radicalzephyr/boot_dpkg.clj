@@ -1,4 +1,4 @@
-(ns radicalzephyr.boot-deb
+(ns radicalzephyr.boot-dpkg
   {:boot/export-tasks true}
   (:require [boot.core :as core]
             [boot.util :as util]
@@ -40,7 +40,7 @@
       (doseq [out-file (core/output-files fileset)]
         (printf "%s  %s\n" (:hash out-file) (:path out-file))))))
 
-(core/deftask debian-package
+(core/deftask dpkg
   "Create the basic structure of a debian package."
   [p package PACKAGE str "The name of the package"
    v version VERSION str "The version number of the package"
