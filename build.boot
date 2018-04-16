@@ -3,8 +3,7 @@
 
 (set-env! :resource-paths #{"src"}
           :dependencies   '[[org.clojure/clojure "1.9.0"]
-                            [boot/core "2.7.2" :scope "test"]
-                            [metosin/boot-alt-test "0.3.3" :scope "test"]])
+                            [boot/core "2.7.2" :scope "test"]])
 
 (task-options!
  pom {:project     project
@@ -20,5 +19,4 @@
   []
   (comp (pom) (jar) (install)))
 
-(require '[adzerk.boot-test :refer [test]]
-         '[radicalzephyr.boot-dpkg :refer [dpkg]])
+(require '[radicalzephyr.boot-dpkg :refer [dpkg]])
