@@ -1,8 +1,7 @@
 (def project 'radicalzephyr/boot-dpkg)
 (def version "0.1.0-SNAPSHOT")
 
-(set-env! :resource-paths #{"resources" "src"}
-          :source-paths   #{"test"}
+(set-env! :resource-paths #{"src"}
           :dependencies   '[[org.clojure/clojure "1.9.0"]
                             [boot/core "2.7.2" :scope "test"]
                             [metosin/boot-alt-test "0.3.3" :scope "test"]])
