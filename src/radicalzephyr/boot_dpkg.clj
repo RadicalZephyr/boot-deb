@@ -3,7 +3,10 @@
   (:require [boot.core :as core]
             [boot.util :as util]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  (:import (java.nio.file Files
+                          CopyOption
+                          StandardCopyOption)))
 
 
 (defn- format-key [k]
@@ -66,7 +69,9 @@
         (doseq [tmp-file (core/ls fileset)]
           (let [new-copy (io/file tmp (core/tmp-path tmp-file))]
             (io/make-parents new-copy)
-            (io/copy (core/tmp-file tmp-file) new-copy)))
+            (Files/copy (.toPath (core/tmp-file tmp-file))
+                        (.toPath new-copy)
+                        (into-array CopyOption [StandardCopyOption/COPY_ATTRIBUTES]))))
         (core/empty-dir! deb-tmp)
         (util/dosh "dpkg-deb" "--build" (.getAbsolutePath tmp) (.getAbsolutePath deb-file))
         (-> fileset
