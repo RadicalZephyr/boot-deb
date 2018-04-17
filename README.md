@@ -1,8 +1,8 @@
-# boot-deb
+# boot-dpkg
 
 [](dependency)
 ```clojure
-[radicalzephyr/boot-junit "0.1.0"] ;; latest release
+[radicalzephyr/boot-dpkg "0.1.0"] ;; latest release
 ```
 [](/dependency)
 
