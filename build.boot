@@ -2,6 +2,7 @@
 (def version "0.1.0-SNAPSHOT")
 
 (set-env! :resource-paths #{"src"}
+          :source-paths #{"src"}
           :dependencies   '[[org.clojure/clojure "1.9.0"]
                             [boot/core "2.7.2" :scope "test"]])
 
@@ -17,6 +18,4 @@
 (deftask build
   "Build and install the project locally."
   []
-  (comp (pom) (jar) (install)))
-
-(require '[radicalzephyr.boot-dpkg :refer [dpkg]])
+  (comp (javac) (pom) (jar) (install)))
