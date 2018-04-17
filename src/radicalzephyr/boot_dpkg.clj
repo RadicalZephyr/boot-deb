@@ -5,13 +5,17 @@
             [clojure.java.io :as io]
             [clojure.string :as str])
   (:import
-   (radicalzephyr ChownFileVisitor)
-   (java.io File)
-   (java.nio.file Files
+   (java.io File
+            IOException)
+   (java.nio.file CopyOption
+                  Files
                   FileSystems
-                  CopyOption
+                  FileVisitResult
+                  LinkOption
+                  SimpleFileVisitor
                   StandardCopyOption)
-   (java.nio.file.attribute UserPrincipalLookupService)))
+   (java.nio.file.attribute PosixFileAttributeView
+                            UserPrincipalLookupService)))
 
 
 (defn- format-key [k]
@@ -71,10 +75,38 @@
             {}
             chowns)))
 
+(defn- chown-path [root-path path user group]
+  (try
+    (Files/setOwner path user)
+    (catch IOException e
+      (util/fail "Could not change owner of %s.\n"
+                 (str/replace (.getMessage e) (str root-path "/") ""))))
+  (try
+    (-> path
+        (Files/getFileAttributeView
+         PosixFileAttributeView
+         (into-array LinkOption [LinkOption/NOFOLLOW_LINKS]))
+        (.setGroup group))
+    (catch IOException e
+      (util/fail "Could not change group of %s\n"
+                 (str/replace (.getMessage e) (str root-path "/") "")))))
+
+(defn- mk-chown-visitor [root-dir user group]
+  (let [root-path (.toPath root-dir)]
+    (proxy [SimpleFileVisitor]
+        []
+      (postVisitDirectory [dir exc]
+        (chown-path root-path dir user group)
+        FileVisitResult/CONTINUE)
+
+      (visitFile [file attrs]
+        (chown-path root-path file user group)
+        FileVisitResult/CONTINUE))))
+
 (defn- change-ownership [root-dir chowns]
   (doseq [[chown-root [user group]] chowns
           :let [root-path (.toPath (io/file root-dir chown-root))]]
-    (Files/walkFileTree root-path (ChownFileVisitor. user group))))
+    (Files/walkFileTree root-path (mk-chown-visitor root-dir user group))))
 
 (core/deftask dpkg
   "Create the basic structure of a debian package.
@@ -103,9 +135,9 @@
 
   (when (and (seq chowns)
              (not= "root" (System/getProperty "user.name")))
-    (util/warn "%s\n%s\n%s\n"
+    (util/warn "dpkg: %s\n%s\n%s\n"
                "You specified ownership changes to be made, but are not running as root."
-               "It's very likely that this will not work."
+               "It's very likely that this will NOT work."
                "Try running boot as root and setting BOOT_AS_ROOT=yes"))
   (let [chowns (lookup chowns)]
    (if (and package version)
