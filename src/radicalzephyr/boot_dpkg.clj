@@ -77,16 +77,30 @@
     (Files/walkFileTree root-path (ChownFileVisitor. user group))))
 
 (core/deftask dpkg
-  "Create the basic structure of a debian package."
-  [p package PACKAGE str "The name of the package"
-   v version VERSION str "The version number of the package"
-   s section SECTION str "The section the package should be in"
-   r priority PRIORITY str "The priority of the package"
-   a architecture ARCH str "The architecture of the package"
-   d depends DEPENDS [str] "Dependencies of the package"
-   m maintainer MAINTAINER str "The name of the package maintainer"
-   c description DESCRIPTION str "The description of the package"
-   o owners ROOT-OWNER {str str} "The map of root directories to file owner strings"]
+  "Create the basic structure of a debian package.
+
+  Most of the options directly correspond to a field in the `control`
+  file and no processing is done on them. The `Installed-Size` is
+  calculated automatically.
+
+  The --owners option allows specifying a set of ownership changes to
+  make. The ROOT portion should be a path relative to the fileset, the
+  OWNER portion should be either a simple username or a user and group
+  name separated by a colon: `USER:GROUP`. If only the username is
+  specified, it will be used for the group name as well.  A recursive
+  ownership change is done on each of the specified ROOTs. The intent
+  is to essentially be equivalent to running `chown -R OWNER ROOT`."
+
+  [p package PACKAGE str "The name of the package."
+   v version VERSION str "The version number of the package."
+   s section SECTION str "The section the package."
+   r priority PRIORITY str "The priority of the package."
+   a architecture ARCH str "The architecture of the package."
+   d depends DEPENDS [str] "Dependencies of the package."
+   m maintainer MAINTAINER str "The name of the package maintainer."
+   c description DESCRIPTION str "The description of the package."
+   o owners ROOT-OWNER [[str str]] "The list of root directories to file owner strings."]
+
   (let [owners (lookup owners)]
    (if (and package version)
      (let [tmp (core/tmp-dir!)
