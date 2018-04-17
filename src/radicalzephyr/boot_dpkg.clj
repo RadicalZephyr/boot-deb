@@ -101,6 +101,12 @@
    c description DESCRIPTION str "The description of the package."
    o chowns ROOT-OWNER [[str str]] "The list of root directories to file owner strings."]
 
+  (when (and (seq chowns)
+             (not= "root" (System/getProperty "user.name")))
+    (util/warn "%s\n%s\n%s\n"
+               "You specified ownership changes to be made, but are not running as root."
+               "It's very likely that this will not work."
+               "Try running boot as root and setting BOOT_AS_ROOT=yes"))
   (let [chowns (lookup chowns)]
    (if (and package version)
      (let [tmp (core/tmp-dir!)
