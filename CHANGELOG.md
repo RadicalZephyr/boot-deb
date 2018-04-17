@@ -4,8 +4,12 @@ file. This change log follows the conventions of
 [keepachangelog.com](http://keepachangelog.com/).
 
 ## [Unreleased]
+
+[Unreleased]: https://github.com/your-name/boot-deb/compare/0.1.0...HEAD
+
+## [0.1.0] - 2018-04-16
 ### Added
 
 - Add `dpkg` task
 
-[Unreleased]: https://github.com/your-name/boot-deb/compare/3d0c43f...HEAD
+[0.1.0]: https://github.com/your-name/boot-deb/compare/3d0c43f...0.1.0
