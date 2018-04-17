@@ -56,7 +56,7 @@
               (.toPath to)
               copy-attributes))
 
-(defn- lookup [owners]
+(defn- lookup [chowns]
   (let [^UserPrincipalLookupService
         lookup-service (.getUserPrincipalLookupService
                         (FileSystems/getDefault))]
@@ -69,10 +69,10 @@
                   (assoc acc re [user group])
                   acc)))
             {}
-            owners)))
+            chowns)))
 
-(defn- change-ownership [root-dir owners]
-  (doseq [[chown-root [user group]] owners
+(defn- change-ownership [root-dir chowns]
+  (doseq [[chown-root [user group]] chowns
           :let [root-path (.toPath (io/file root-dir chown-root))]]
     (Files/walkFileTree root-path (ChownFileVisitor. user group))))
 
@@ -83,7 +83,7 @@
   file and no processing is done on them. The `Installed-Size` is
   calculated automatically.
 
-  The --owners option allows specifying a set of ownership changes to
+  The --chowns option allows specifying a set of ownership changes to
   make. The ROOT portion should be a path relative to the fileset, the
   OWNER portion should be either a simple username or a user and group
   name separated by a colon: `USER:GROUP`. If only the username is
@@ -99,9 +99,9 @@
    d depends DEPENDS [str] "Dependencies of the package."
    m maintainer MAINTAINER str "The name of the package maintainer."
    c description DESCRIPTION str "The description of the package."
-   o owners ROOT-OWNER [[str str]] "The list of root directories to file owner strings."]
+   o chowns ROOT-OWNER [[str str]] "The list of root directories to file owner strings."]
 
-  (let [owners (lookup owners)]
+  (let [chowns (lookup chowns)]
    (if (and package version)
      (let [tmp (core/tmp-dir!)
            deb-control-file (io/file tmp "DEBIAN/control")
@@ -119,7 +119,7 @@
            (let [new-copy (io/file tmp (core/tmp-path tmp-file))]
              (io/make-parents new-copy)
              (copy! (core/tmp-file tmp-file) new-copy)))
-         (change-ownership tmp owners)
+         (change-ownership tmp chowns)
          (core/empty-dir! deb-tmp)
          (util/dosh "dpkg-deb" "--build" (.getAbsolutePath tmp) (.getAbsolutePath deb-file))
          (-> fileset
