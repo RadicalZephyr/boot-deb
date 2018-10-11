@@ -6,6 +6,9 @@ file. This change log follows the conventions of
 ## [Unreleased]
 
 [Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.2.0...HEAD
+### Fixed
+
+- When the `dpkg` task is not passed required options it now actually fails
 
 ## [0.2.0] - 2018-10-11
 ### Fixed

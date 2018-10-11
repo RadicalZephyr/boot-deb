@@ -140,29 +140,29 @@
                "You specified ownership changes to be made, but are not running as root."
                "It's very likely that this will NOT work."
                "Try running boot as root and setting BOOT_AS_ROOT=yes"))
-  (let [chowns (lookup chowns)]
-   (if (and package version)
-     (let [tmp (core/tmp-dir!)
-           deb-control-file (io/file tmp "DEBIAN/control")
-           deb-md5sums-file (io/file tmp "DEBIAN/md5sums")
-           deb-file-name (format "%s_%s_%s.deb" package version architecture)
-           deb-tmp (core/tmp-dir!)
-           deb-file (io/file deb-tmp deb-file-name)]
-       (core/with-pre-wrap [fileset]
-         (core/empty-dir! tmp)
-         (io/make-parents deb-control-file)
-         (util/info "Writing debian package control files...\n")
-         (spit deb-control-file (control-file-content fileset *opts*))
-         (write-md5sums-file fileset deb-md5sums-file)
-         (doseq [tmp-file (core/ls fileset)]
-           (let [new-copy (io/file tmp (core/tmp-path tmp-file))]
-             (io/make-parents new-copy)
-             (copy! (core/tmp-file tmp-file) new-copy)))
-         (change-ownership tmp chowns)
-         (core/empty-dir! deb-tmp)
-         (util/dosh "dpkg-deb" "--build" (.getAbsolutePath tmp) (.getAbsolutePath deb-file))
-         (-> fileset
-             (core/add-resource tmp)
-             (core/add-resource deb-tmp)
-             core/commit!)))
-     (util/warn "Must specify package name and version."))))
+  (when-not (and package version)
+    (throw (Exception. "need package name and version to create deb package")))
+  (let [tmp (core/tmp-dir!)
+        chowns (lookup chowns)
+        deb-control-file (io/file tmp "DEBIAN/control")
+        deb-md5sums-file (io/file tmp "DEBIAN/md5sums")
+        deb-file-name (format "%s_%s_%s.deb" package version architecture)
+        deb-tmp (core/tmp-dir!)
+        deb-file (io/file deb-tmp deb-file-name)]
+    (core/with-pre-wrap [fileset]
+      (core/empty-dir! tmp)
+      (io/make-parents deb-control-file)
+      (util/info "Writing debian package control files...\n")
+      (spit deb-control-file (control-file-content fileset *opts*))
+      (write-md5sums-file fileset deb-md5sums-file)
+      (doseq [tmp-file (core/ls fileset)]
+        (let [new-copy (io/file tmp (core/tmp-path tmp-file))]
+          (io/make-parents new-copy)
+          (copy! (core/tmp-file tmp-file) new-copy)))
+      (change-ownership tmp chowns)
+      (core/empty-dir! deb-tmp)
+      (util/dosh "dpkg-deb" "--build" (.getAbsolutePath tmp) (.getAbsolutePath deb-file))
+      (-> fileset
+          (core/add-resource tmp)
+          (core/add-resource deb-tmp)
+          core/commit!))))
