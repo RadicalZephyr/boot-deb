@@ -1,5 +1,5 @@
 (def project 'radicalzephyr/boot-dpkg)
-(def version "0.2.0")
+(def version "0.3.0-SNAPSHOT")
 
 (set-env! :resource-paths #{"src"})
 
