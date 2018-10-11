@@ -5,10 +5,15 @@ file. This change log follows the conventions of
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/radicalzephyr/boot-deb/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/radicalzephyr/boot-deb/compare/0.2.0...HEAD
 
-- Fixed files under `DEBIAN/` are no longer erroneously included in
-  the md5sums listing
+## [0.2.0] - 2018-10-11
+### Fixed
+
+- Files under `DEBIAN/` are no longer erroneously included in the
+  md5sums listing
+
+[0.1.0]: https://github.com/radicalzephyr/boot-deb/compare/0.1.0...0.2.0
 
 ## [0.1.0] - 2018-04-16
 ### Added
