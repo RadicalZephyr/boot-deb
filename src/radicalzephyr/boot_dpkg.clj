@@ -108,6 +108,20 @@
           :let [root-path (.toPath (io/file root-dir chown-root))]]
     (Files/walkFileTree root-path (mk-chown-visitor root-dir user group))))
 
+(defn- write-conffiles-file [fileset conffiles-file conf-files]
+  (with-open [f (io/writer conffiles-file)]
+    (binding [*out* f]
+      (let [etc-files (->> fileset
+                           core/output-files
+                           (core/by-re [#"^etc/"]))
+            other-conf-files (if (seq conf-files)
+                               (->> fileset
+                                    core/output-files
+                                    (core/by-path conf-files))
+                               [])]
+        (doseq [out-file (concat etc-files other-conf-files)]
+          (printf "/%s\n" (:path out-file)))))))
+
 (core/deftask dpkg
   "Create the basic structure of a debian package.
 
@@ -117,6 +131,13 @@
 
   The md5sums control file is generated automatically from the entire
   fileset, excluding any files under \"DEBIAN\".
+
+  The conffiles listing is generated automatically, and by default
+  includes all files in the filset under the \"etc\" directory.
+  Additional configuration files can be specified with the
+  --conf-files option as a seq of absolute paths.  These paths MUST
+  EXIST in the fileset, or they will not be include in the conffiles
+  listing.
 
   The --chowns option allows specifying a set of ownership changes to
   make. The ROOT portion should be a path relative to the fileset, the
@@ -134,7 +155,8 @@
    d depends DEPENDS [str] "Dependencies of the package."
    m maintainer MAINTAINER str "The name of the package maintainer."
    c description DESCRIPTION str "The description of the package."
-   o chowns ROOT-OWNER [[str str]] "The list of root directories to file owner strings."]
+   o chowns ROOT-OWNER [[str str]] "The list of root directories to file owner strings."
+   n conf-files PATHS #{str} "Paths to be marked as configuration files."]
 
   (when (and (seq chowns)
              (not= "root" (System/getProperty "user.name")))
@@ -145,9 +167,12 @@
   (when-not (and package version)
     (throw (Exception. "need package name and version to create deb package")))
   (let [tmp (core/tmp-dir!)
+        architecture (or architecture "all")
+        conf-files (or conf-files #{})
         chowns (lookup chowns)
         deb-control-file (io/file tmp "DEBIAN/control")
         deb-md5sums-file (io/file tmp "DEBIAN/md5sums")
+        deb-conffiles-file (io/file tmp "DEBIAN/conffiles")
         deb-file-name (format "%s_%s_%s.deb" package version architecture)
         deb-tmp (core/tmp-dir!)
         deb-file (io/file deb-tmp deb-file-name)]
@@ -157,6 +182,7 @@
       (util/info "Writing debian package control files...\n")
       (spit deb-control-file (control-file-content fileset *opts*))
       (write-md5sums-file fileset deb-md5sums-file)
+      (write-conffiles-file fileset deb-conffiles-file conf-files)
       (doseq [tmp-file (core/ls fileset)]
         (let [new-copy (io/file tmp (core/tmp-path tmp-file))]
           (io/make-parents new-copy)

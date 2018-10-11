@@ -6,6 +6,12 @@ file. This change log follows the conventions of
 ## [Unreleased]
 
 [Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.2.0...HEAD
+### Added
+
+- Generate conffiles listing automatically from all included files
+  under `/etc`
+- New --conf-files option for specifying additional paths
+
 ### Fixed
 
 - When the `dpkg` task is not passed required options it now actually fails
