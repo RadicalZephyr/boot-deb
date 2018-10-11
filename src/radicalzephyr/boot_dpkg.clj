@@ -116,6 +116,9 @@
   file and no processing is done on them. The `Installed-Size` is
   calculated automatically.
 
+  The md5sums control file is generated automatically from the entire
+  fileset, excluding any files under \"DEBIAN\".
+
   The --chowns option allows specifying a set of ownership changes to
   make. The ROOT portion should be a path relative to the fileset, the
   OWNER portion should be either a simple username or a user and group
