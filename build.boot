@@ -1,10 +1,7 @@
 (def project 'radicalzephyr/boot-dpkg)
 (def version "0.2.0-SNAPSHOT")
 
-(set-env! :resource-paths #{"src"}
-          :source-paths #{"src"}
-          :dependencies   '[[org.clojure/clojure "1.9.0"]
-                            [boot/core "2.7.2" :scope "test"]])
+(set-env! :resource-paths #{"src"})
 
 (task-options!
  pom {:project     project
