@@ -5,7 +5,7 @@ file. This change log follows the conventions of
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/radicalzephyr/boot-deb/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.2.0...HEAD
 
 ## [0.2.0] - 2018-10-11
 ### Fixed
@@ -13,11 +13,11 @@ file. This change log follows the conventions of
 - Files under `DEBIAN/` are no longer erroneously included in the
   md5sums listing
 
-[0.1.0]: https://github.com/radicalzephyr/boot-deb/compare/0.1.0...0.2.0
+[0.1.0]: https://github.com/radicalzephyr/boot-dpkg/compare/0.1.0...0.2.0
 
 ## [0.1.0] - 2018-04-16
 ### Added
 
 - Add `dpkg` task
 
-[0.1.0]: https://github.com/radicalzephyr/boot-deb/compare/3d0c43f...0.1.0
+[0.1.0]: https://github.com/radicalzephyr/boot-dpkg/compare/3d0c43f...0.1.0
