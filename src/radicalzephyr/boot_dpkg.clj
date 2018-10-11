@@ -49,8 +49,7 @@
 (defn- write-md5sums-file [fileset md5sums-file]
   (with-open [f (io/writer md5sums-file)]
     (binding [*out* f]
-      (doseq [out-file (core/by-re [#"^DEBIAN"] (core/output-files fileset) true)
-              :when (not (re-matches #"^DEBIAN" (core/tmp-path out-file)))]
+      (doseq [out-file (core/by-re [#"^DEBIAN"] (core/output-files fileset) true)]
         (printf "%s  %s\n" (:hash out-file) (:path out-file))))))
 
 (def ^:private copy-attributes
