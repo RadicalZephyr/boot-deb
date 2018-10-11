@@ -7,6 +7,9 @@ file. This change log follows the conventions of
 
 [Unreleased]: https://github.com/radicalzephyr/boot-deb/compare/0.1.0...HEAD
 
+- Fixed files under `DEBIAN/` are no longer erroneously included in
+  the md5sums listing
+
 ## [0.1.0] - 2018-04-16
 ### Added
 
