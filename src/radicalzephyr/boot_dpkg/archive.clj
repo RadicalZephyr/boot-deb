@@ -66,6 +66,11 @@
       (with-open [file-stream (FileInputStream. file)]
         (IOUtils/copy file-stream tar-out)))))
 
+(def ^:private
+  maintainer-script-names
+  #{"prerm" "postrm"
+    "preinst" "postinst"})
+
 (defn create-control-tar! [tmp-dir paths]
   (let [tar-file (io/file tmp-dir "control.tar.gz")]
     (with-open [tar-out (-> tar-file
@@ -75,6 +80,8 @@
                             TarArchiveOutputStream.)]
       (doseq [[file archive-name] paths
               :let [entry (TarArchiveEntry. file archive-name)]]
+        (when (contains? maintainer-script-names archive-name)
+          (.setMode entry 0755))
         (write-entry-to-stream! tar-out entry file)))
     tar-file))
 
