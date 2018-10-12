@@ -5,7 +5,11 @@
                     File
                     FileInputStream
                     FileOutputStream)
-           (java.nio.file Path)
+           (java.nio.file Files
+                          LinkOption
+                          Path)
+           (java.nio.file.attribute PosixFileAttributes
+                                    PosixFilePermission)
            (java.util Date)
            (org.apache.commons.io IOUtils)
            (org.apache.commons.compress.archivers.ar ArArchiveOutputStream
@@ -85,6 +89,28 @@
         (write-entry-to-stream! tar-out entry file)))
     tar-file))
 
+(def ^:private
+  permission->int
+  {PosixFilePermission/OWNER_READ 0400
+   PosixFilePermission/OWNER_WRITE 0200
+   PosixFilePermission/OWNER_EXECUTE 0100
+
+   PosixFilePermission/GROUP_READ 040
+   PosixFilePermission/GROUP_WRITE 020
+   PosixFilePermission/GROUP_EXECUTE 010
+
+   PosixFilePermission/OTHERS_READ 04
+   PosixFilePermission/OTHERS_WRITE 02
+   PosixFilePermission/OTHERS_EXECUTE 01})
+
+(defn- get-int-file-permissions [^Path file]
+  (let [attrs (Files/readAttributes file
+                                    PosixFileAttributes
+                                    (into-array LinkOption [LinkOption/NOFOLLOW_LINKS]))]
+    (->> (.permissions attrs)
+         (map permission->int)
+         (reduce +))))
+
 (defn create-data-tar! [tmp-dir paths chowns]
   (let [tar-file (io/file tmp-dir "data.tar.xz")]
     (with-open [tar-out (-> tar-file
@@ -94,6 +120,7 @@
                             TarArchiveOutputStream.)]
       (doseq [[file archive-name] paths
               :let [entry (TarArchiveEntry. file archive-name)]]
+        (.setMode entry (get-int-file-permissions (.toPath file)))
         (write-entry-to-stream! tar-out entry file)))
     tar-file))
 
