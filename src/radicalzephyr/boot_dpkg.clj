@@ -122,6 +122,10 @@
         (doseq [out-file (concat etc-files other-conf-files)]
           (printf "/%s\n" (:path out-file)))))))
 
+(defn- create-deb-package [in-dir out-file chowns]
+  (change-ownership in-dir chowns)
+  (util/dosh "dpkg-deb" "--build" (.getAbsolutePath in-dir) (.getAbsolutePath out-file)))
+
 (core/deftask dpkg
   "Create the basic structure of a debian package.
 
@@ -187,9 +191,8 @@
         (let [new-copy (io/file tmp (core/tmp-path tmp-file))]
           (io/make-parents new-copy)
           (copy! (core/tmp-file tmp-file) new-copy)))
-      (change-ownership tmp chowns)
       (core/empty-dir! deb-tmp)
-      (util/dosh "dpkg-deb" "--build" (.getAbsolutePath tmp) (.getAbsolutePath deb-file))
+      (create-deb-package tmp deb-file chowns)
       (-> fileset
           (core/add-resource tmp)
           (core/add-resource deb-tmp)
