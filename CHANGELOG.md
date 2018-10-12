@@ -4,8 +4,8 @@ file. This change log follows the conventions of
 [keepachangelog.com](http://keepachangelog.com/).
 
 ## [Unreleased]
-
 [Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.2.0...HEAD
+
 ### Added
 
 - Generate conffiles listing automatically from all included files
@@ -15,6 +15,10 @@ file. This change log follows the conventions of
 ### Fixed
 
 - When the `dpkg` task is not passed required options it now actually fails
+
+### Changed
+
+- Package creation is now done "by hand" instead of shelling out to `dpkg-deb`
 
 ## [0.2.0] - 2018-10-11
 ### Fixed
