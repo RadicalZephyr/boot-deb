@@ -108,6 +108,20 @@
          (map permission->int)
          (reduce +))))
 
+(defn- get-chown [chowns path]
+  (some (fn [[prefix chown]]
+          (when (str/starts-with? path prefix)
+            chown))
+        chowns))
+
+(defn- set-owners! [entry [uid user] [gid group]]
+  (doto entry
+    (.setUserId uid)
+    (.setUserName user)
+    (.setGroupId gid)
+    (.setGroupName group))
+  nil)
+
 (defn create-data-tar! [tmp-dir paths chowns]
   (let [tar-file (io/file tmp-dir "data.tar.xz")]
     (with-open [tar-out (-> tar-file
@@ -118,6 +132,8 @@
       (doseq [[file archive-name] paths
               :let [entry (TarArchiveEntry. file archive-name)]]
         (.setMode entry (get-int-file-permissions (.toPath file)))
+        (when-let [[user group] (get-chown chowns archive-name)]
+          (set-owners! entry user group))
         (write-entry-to-stream! tar-out entry file)))
     tar-file))
 

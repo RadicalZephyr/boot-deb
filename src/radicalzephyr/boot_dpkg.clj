@@ -3,6 +3,7 @@
   (:require [boot.core :as core]
             [boot.pod :as pod]
             [boot.util :as util]
+            [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str])
   (:import
@@ -11,6 +12,33 @@
                   Files
                   StandardCopyOption)))
 
+(defn- rt []
+  (Runtime/getRuntime))
+
+(defn- exec [& args]
+  (let [process (.exec (rt) (into-array String (map str args)))]
+    (with-open [output (.getInputStream process)]
+      (slurp output))))
+
+(defn- lookup-uid [user]
+  (edn/read-string
+   (exec "id" "-u" user)))
+
+(defn- lookup-gid [group]
+  (edn/read-string
+   (exec "id" "-g" group)))
+
+(defn- lookup [chowns]
+  (reduce (fn [acc [path user-group]]
+            (let [[user group] (str/split user-group #":")
+                  group (or group user)
+                  uid (lookup-uid user)
+                  gid (lookup-gid group)]
+              (if (and uid gid)
+                (assoc acc path [[uid user] [gid group]])
+                (assoc acc path [[  0 user] [  0 group]]))))
+          {}
+          chowns))
 
 (defn- format-key [k]
   (let [key-words (-> k name (str/split #"-"))]
@@ -121,6 +149,7 @@
         worker-pod (pod/make-pod pod-env)
         tmp (core/tmp-dir!)
         architecture (or architecture "all")
+        chowns (lookup chowns)
         conf-files (or conf-files #{})
         deb-control-file (io/file tmp "DEBIAN/control")
         deb-md5sums-file (io/file tmp "DEBIAN/md5sums")
