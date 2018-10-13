@@ -108,7 +108,7 @@
    d depends DEPENDS [str] "Dependencies of the package."
    m maintainer MAINTAINER str "The name of the package maintainer."
    c description DESCRIPTION str "The description of the package."
-   o chowns ROOT-OWNER [[str str]] "The list of root directories to file owner strings."
+   o chowns ROOT:OWNER {str str} "The mapping of root directories to file owner strings."
    n conf-files PATHS #{str} "Paths to be marked as configuration files."]
 
   (when-not (and package version)

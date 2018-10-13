@@ -18,7 +18,10 @@ file. This change log follows the conventions of
 
 ### Changed
 
-- Package creation is now done "by hand" instead of shelling out to `dpkg-deb`
+- Package creation is now done "by hand" instead of shelling out to
+  `dpkg-deb`
+- Change format of chowns argument from <PATH>-<OWNER> to
+  <PATH>:<OWNER> and data coercion from a vector of pairs to a map
 
 ## [0.2.0] - 2018-10-11
 ### Fixed
