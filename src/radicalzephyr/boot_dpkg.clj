@@ -6,17 +6,10 @@
             [clojure.java.io :as io]
             [clojure.string :as str])
   (:import
-   (java.io File
-            IOException)
+   (java.io File)
    (java.nio.file CopyOption
                   Files
-                  FileSystems
-                  FileVisitResult
-                  LinkOption
-                  SimpleFileVisitor
-                  StandardCopyOption)
-   (java.nio.file.attribute PosixFileAttributeView
-                            UserPrincipalLookupService)))
+                  StandardCopyOption)))
 
 
 (defn- format-key [k]
@@ -118,12 +111,6 @@
    o chowns ROOT-OWNER [[str str]] "The list of root directories to file owner strings."
    n conf-files PATHS #{str} "Paths to be marked as configuration files."]
 
-  #_(when (and (seq chowns)
-             (not= "root" (System/getProperty "user.name")))
-    (util/warn "dpkg: %s\n%s\n%s\n"
-               "You specified ownership changes to be made, but are not running as root."
-               "It's very likely that this will NOT work."
-               "Try running boot as root and setting BOOT_AS_ROOT=yes"))
   (when-not (and package version)
     (throw (Exception. "need package name and version to create deb package")))
   (let [pod-env (update-in (core/get-env) [:dependencies]

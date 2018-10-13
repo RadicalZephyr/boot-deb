@@ -1,23 +1,23 @@
 (ns radicalzephyr.boot-dpkg.archive
   (:require [clojure.java.io :as io]
             [clojure.string :as str])
-  (:import (java.io BufferedOutputStream
-                    File
-                    FileInputStream
-                    FileOutputStream)
-           (java.nio.file Files
-                          LinkOption
-                          Path)
-           (java.nio.file.attribute PosixFileAttributes
-                                    PosixFilePermission)
-           (java.util Date)
-           (org.apache.commons.io IOUtils)
-           (org.apache.commons.compress.archivers.ar ArArchiveOutputStream
-                                                     ArArchiveEntry)
-           (org.apache.commons.compress.archivers.tar TarArchiveOutputStream
-                                                      TarArchiveEntry)
-           (org.apache.commons.compress.compressors.gzip GzipCompressorOutputStream)
-           (org.apache.commons.compress.compressors.xz XZCompressorOutputStream)))
+  (:import
+   (java.io BufferedOutputStream
+            File
+            FileInputStream
+            FileOutputStream)
+   (java.nio.file Files
+                  LinkOption
+                  Path)
+   (java.nio.file.attribute PosixFileAttributes
+                            PosixFilePermission)
+   (org.apache.commons.io IOUtils)
+   (org.apache.commons.compress.archivers.ar ArArchiveOutputStream
+                                             ArArchiveEntry)
+   (org.apache.commons.compress.archivers.tar TarArchiveOutputStream
+                                              TarArchiveEntry)
+   (org.apache.commons.compress.compressors.gzip GzipCompressorOutputStream)
+   (org.apache.commons.compress.compressors.xz XZCompressorOutputStream)))
 
 (defmacro with-archive-entry [archive entry & body]
   `(let [archive# ~archive
@@ -55,9 +55,6 @@
           (drop 1)
           (map strip-debian))
      (remove in-debian? relative-paths)]))
-
-(defn- now []
-  (.getTime (Date.)))
 
 (defn create-debian-binary-file! [ar-out]
   (let [bytes (.getBytes "2.0\n")]
