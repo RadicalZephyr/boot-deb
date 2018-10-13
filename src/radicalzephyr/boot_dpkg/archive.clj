@@ -114,11 +114,9 @@
             chown))
         chowns))
 
-(defn- set-owners! [entry [uid user] [gid group]]
+(defn- set-owners! [entry user group]
   (doto entry
-    (.setUserId uid)
     (.setUserName user)
-    (.setGroupId gid)
     (.setGroupName group))
   nil)
 
