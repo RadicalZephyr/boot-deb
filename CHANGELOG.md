@@ -4,8 +4,9 @@ file. This change log follows the conventions of
 [keepachangelog.com](http://keepachangelog.com/).
 
 ## [Unreleased]
-[Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.3.0...HEAD
 
+## [0.3.0] - 2018-10-13
 ### Added
 
 - Generate conffiles listing automatically from all included files
@@ -23,13 +24,15 @@ file. This change log follows the conventions of
 - Change format of chowns argument from <PATH>-<OWNER> to
   <PATH>:<OWNER> and data coercion from a vector of pairs to a map
 
+[0.3.0]: https://github.com/radicalzephyr/boot-dpkg/compare/0..0...0.3.0
+
 ## [0.2.0] - 2018-10-11
 ### Fixed
 
 - Files under `DEBIAN/` are no longer erroneously included in the
   md5sums listing
 
-[0.1.0]: https://github.com/radicalzephyr/boot-dpkg/compare/0.1.0...0.2.0
+[0.2.0]: https://github.com/radicalzephyr/boot-dpkg/compare/0.1.0...0.2.0
 
 ## [0.1.0] - 2018-04-16
 ### Added
