@@ -6,6 +6,10 @@ file. This change log follows the conventions of
 ## [Unreleased]
 [Unreleased]: https://github.com/radicalzephyr/boot-dpkg/compare/0.3.0...HEAD
 
+### Fixed
+
+- Format the contents of the `:depends` key correctly in `control` file
+
 ## [0.3.0] - 2018-10-13
 ### Added
 

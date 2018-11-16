@@ -38,7 +38,9 @@
         (str " kB"))))
 
 (defn- control-file-content [fileset package-details]
-  (let [package-details (assoc package-details :installed-size (calculate-size fileset))]
+  (let [package-details (->  package-details
+                             (assoc :installed-size (calculate-size fileset))
+                             (update-in [:depends] #(str/join ", " (map str %))))]
     (str
      (str/join "\n"
                (keep (fn [key]
